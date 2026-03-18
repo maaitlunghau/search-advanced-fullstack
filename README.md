@@ -2,7 +2,7 @@
 
 A sophisticated Fullstack search platform for educational courses, built with **ASP.NET Core** and **Next.js**. This project implements high-performance search functionalities, dynamic suggestions, and a premium modern UI.
 
-![Search Interface Mockup](./search_mockup.png)
+<img src="./search_mockup.png" width="100%" alt="Search Interface Mockup"/>
 
 ---
 
