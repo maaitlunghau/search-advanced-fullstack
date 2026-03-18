@@ -1,0 +1,41 @@
+các chức năng cần có:
+    - search course with keyword
+
+    - hiển thị suggest khi search
+        + dựa vào keyword để mà đề xuất các từ khoá khác
+        + dựa vào keyword để mà đề xuất các item/đối tượng
+
+    - filter theo category của đối tượng
+
+    - hiển thị Search logs sau khi search (2 cách để làm):
+        + xử lí ở frontend: dùng localStorage
+        + xử lí ở backend: dùng database, tạo thêm bảng search_logs -> phải có cơ chế clean data định kì
+
+    - khi chưa search:
+        + hiển thị lịch sử tìm kiếm của người đó (nếu có)
+        + hiển thị các keyword mà người dùng search hot gần đây
+        + hiển thị một vài các item/đối tượng
+
+    - có hiệu ứng Skeleton khi cập nhật Mini List trogn suggest
+    - có logic debounce khi search
+
+
+Entity: Course
+
+công nghệ sử dụng:
+    - backend: ASP.NET Web APi
+    - frontend: NextJS + TailwindCSS (dùng Antigravity làm UI)
+    - database: MySQL
+
+các component/trang cần có ở Frontend:
+    1. Header + Footer
+    2. Thanh Search + Suggestion UI
+    3. Thanh Filter để lọc
+    4. Item Card Object
+    5. Trang Detail Object
+    6. Trang Search Results (Main List)
+    7. Table hiển thị tất cả kết quả tìm kiếm
+
+hiệu ứng ở Frontend:
+    1. Hiệu ứng overlay xám nhẹ khi suggest xuất hiện
+    2. Hiệu ứng Skeleton khi Mini List được cập nhật
