@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
@@ -9,11 +7,11 @@ namespace server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CourseControlle : ControllerBase
+public class CourseController : ControllerBase
 {
     private readonly DataContext _dbContext;
 
-    public CourseControlle(DataContext dbContext)
+    public CourseController(DataContext dbContext)
         => _dbContext = dbContext;
 
     [HttpGet]
@@ -21,7 +19,7 @@ public class CourseControlle : ControllerBase
     {
         try
         {
-            var courses = await _dbContext.Courses.ToListAsync();
+            var courses = await _dbContext.Courses.AsNoTracking().ToListAsync();
             return Ok(courses);
         }
         catch (Exception ex)
@@ -35,7 +33,7 @@ public class CourseControlle : ControllerBase
     {
         try
         {
-            var singleCourse = await _dbContext.Courses.FindAsync(id);
+            var singleCourse = await _dbContext.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
             return Ok(singleCourse);
         }
         catch (Exception ex)
@@ -99,7 +97,7 @@ public class CourseControlle : ControllerBase
     {
         try
         {
-            var query = _dbContext.Courses.AsQueryable();
+            var query = _dbContext.Courses.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrEmpty(q))
             {
