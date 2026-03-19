@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using server.Data;
 using server.Models;
 
@@ -49,56 +48,12 @@ public class CourseController : ControllerBase
         try
         {
             var featuredCourses = await _dbContext.Courses
+                .AsNoTracking()
                 .OrderByDescending(c => c.TotalStudents)
                 .Take(limit)
-                .AsNoTracking()
                 .ToListAsync();
 
             return Ok(featuredCourses);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
-    }
-
-    [HttpGet("suggestions")]
-    public async Task<IActionResult> GetSuggestions([FromQuery] string q, [FromQuery] int limit = 5)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(q))
-            {
-                return Ok(new
-                {
-                    Keywords = new List<string>(),
-                    Courses = new List<object>()
-                });
-            }
-
-            string lowerQuery = q.ToLower();
-
-            var keywords = await _dbContext.SearchLogs
-                .Where(sl => sl.Query.ToLower().Contains(lowerQuery))
-                .GroupBy(sl => sl.Query)
-                .OrderByDescending(g => g.Count())
-                .Take(5)
-                .Select(g => g.Key)
-                .ToListAsync();
-
-            var courses = await _dbContext.Courses
-                .Where(c => c.Title.ToLower().Contains(lowerQuery) ||
-                    c.Description.ToLower().Contains(lowerQuery))
-                .OrderByDescending(c => c.TotalStudents)
-                .Take(limit)
-                .ToListAsync();
-
-            return Ok(new
-            {
-                Keywords = keywords,
-                Courses = courses
-            });
-
         }
         catch (Exception ex)
         {
@@ -124,6 +79,7 @@ public class CourseController : ControllerBase
                 var lowerQuery = q.ToLower();
                 query = query.Where(c => c.Title.ToLower().Contains(lowerQuery) || c.Description.ToLower().Contains(lowerQuery));
 
+                // Log the valid search query
                 _dbContext.SearchLogs.Add(new SearchLog
                 {
                     Query = q!
@@ -148,27 +104,6 @@ public class CourseController : ControllerBase
                 .ToListAsync();
 
             return Ok(results);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
-    }
-
-    [HttpGet("hot-searches")]
-    public async Task<IActionResult> GetHotSearches()
-    {
-        try
-        {
-            var hotSearches = await _dbContext.SearchLogs
-                .GroupBy(sl => sl.Query)
-                .OrderByDescending(g => g.Count())
-                .Take(6)
-                .Select(g => g.Key)
-                .AsNoTracking()
-                .ToListAsync();
-
-            return Ok(hotSearches);
         }
         catch (Exception ex)
         {
