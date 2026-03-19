@@ -43,6 +43,25 @@ public class CourseController : ControllerBase
         }
     }
 
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeaturedCourses([FromQuery] int limit = 3)
+    {
+        try
+        {
+            var featuredCourses = await _dbContext.Courses
+                .OrderByDescending(c => c.TotalStudents)
+                .Take(limit)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(featuredCourses);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
     [HttpGet("suggestions")]
     public async Task<IActionResult> GetSuggestions([FromQuery] string q, [FromQuery] int limit = 5)
     {
