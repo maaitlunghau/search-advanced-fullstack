@@ -21,5 +21,4 @@ public class Course
     public Guid CategoryId { get; set; }
     public Category Category { get; set; } = null!;
 
-    public ICollection<CourseTag> CourseTags { get; set; } = new List<CourseTag>();
 }
