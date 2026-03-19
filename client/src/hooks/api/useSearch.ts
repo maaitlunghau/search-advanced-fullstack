@@ -34,7 +34,8 @@ export const useSearchCourses = (params: {
   q?: string; 
   categoryId?: string; 
   level?: string; 
-  page?: number 
+  page?: number;
+  pageSize?: number;
 }) => {
   return useQuery<Course[]>({
     queryKey: ['search', 'courses', params],
