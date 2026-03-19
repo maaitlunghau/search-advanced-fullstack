@@ -12,8 +12,8 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260318072729_CourseDB")]
-    partial class CourseDB
+    [Migration("20260319134919_RemoveTagsAndUseSearchLogs")]
+    partial class RemoveTagsAndUseSearchLogs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,21 +99,6 @@ namespace server.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("server.Models.CourseTag", b =>
-                {
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("CourseId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("CourseTags");
-                });
-
             modelBuilder.Entity("server.Models.SearchLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -132,21 +117,6 @@ namespace server.Migrations
                     b.ToTable("SearchLogs");
                 });
 
-            modelBuilder.Entity("server.Models.Tag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("server.Models.Course", b =>
                 {
                     b.HasOne("server.Models.Category", "Category")
@@ -158,38 +128,9 @@ namespace server.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("server.Models.CourseTag", b =>
-                {
-                    b.HasOne("server.Models.Course", "Course")
-                        .WithMany("CourseTags")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.Tag", "Tag")
-                        .WithMany("CourseTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("server.Models.Category", b =>
                 {
                     b.Navigation("Courses");
-                });
-
-            modelBuilder.Entity("server.Models.Course", b =>
-                {
-                    b.Navigation("CourseTags");
-                });
-
-            modelBuilder.Entity("server.Models.Tag", b =>
-                {
-                    b.Navigation("CourseTags");
                 });
 #pragma warning restore 612, 618
         }
