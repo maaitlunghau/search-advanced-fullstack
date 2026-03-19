@@ -12,8 +12,8 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260318072729_CourseDB")]
-    partial class CourseDB
+    [Migration("20260319133344_SearchCourseDb")]
+    partial class SearchCourseDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,9 @@ namespace server.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
