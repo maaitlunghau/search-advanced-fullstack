@@ -1,4 +1,5 @@
-using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
@@ -88,12 +89,47 @@ public class CourseControlle : ControllerBase
     }
 
     [HttpGet("search")]
-    public IActionResult SearchCourses(
+    public async Task<IActionResult> SearchCourses(
+        [FromQuery] string? q,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] string? level,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10
     )
     {
         try
         {
-            return Ok("Search");
+            var query = _dbContext.Courses.AsQueryable();
+
+            if (!string.IsNullOrEmpty(q))
+            {
+                var lowerQuery = q.ToLower();
+                query = query.Where(c => c.Title.ToLower().Contains(lowerQuery) || c.Description.ToLower().Contains(lowerQuery));
+
+                _dbContext.SearchLogs.Add(new SearchLog
+                {
+                    Query = q!
+                });
+                await _dbContext.SaveChangesAsync();
+            }
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(c => c.CategoryId == categoryId);
+            }
+
+            if (!string.IsNullOrEmpty(level))
+            {
+                query = query.Where(c => c.Level.ToLower() == level.ToLower());
+            }
+
+            var results = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(results);
         }
         catch (Exception ex)
         {
