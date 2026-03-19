@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using server.Data;
 using server.Models;
 
@@ -128,6 +129,27 @@ public class CourseController : ControllerBase
                 .ToListAsync();
 
             return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet("hot-searches")]
+    public async Task<IActionResult> GetHotSearches()
+    {
+        try
+        {
+            var hotSearches = await _dbContext.SearchLogs
+                .GroupBy(sl => sl.Query)
+                .OrderByDescending(g => g.Count())
+                .Take(6)
+                .Select(g => g.Key)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(hotSearches);
         }
         catch (Exception ex)
         {
